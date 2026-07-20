@@ -58,11 +58,18 @@ scheduled_tasks:
 
 ## Источники данных
 
-Тестовые и боевые XLSX-данные должны храниться вне директории skill-а, в state-зоне:
+При full-test-run агент ищет входные XLSX в таком порядке:
 
-- `~/Ouroboros/data/state/skills/pmo-daily-status-loop/pmo/test` — тестовые входные данные;
-- `~/Ouroboros/data/state/skills/pmo-daily-status-loop/pmo/live` — боевые входные данные;
-- `~/Ouroboros/data/state/skills/pmo-daily-status-loop/pmo/output` — результаты, если агент или I/O-инструмент записывает их в XLSX.
+1. Путь, явно указанный пользователем в запросе.
+2. `<path_to_ouroboros>/data/state/skills/pmo-daily-status-loop/pmo/test/`, если state-зона Ouroboros доступна.
+
+Если пользователь явно указал путь, агент использует его и не подменяет state-зоной.
+
+Тестовые и боевые XLSX-данные не должны храниться внутри директории skill-а. Для runtime-запуска в Ouroboros используются state-папки:
+
+- `<path_to_ouroboros>/data/state/skills/pmo-daily-status-loop/pmo/test/` — тестовые входные данные;
+- `<path_to_ouroboros>/data/state/skills/pmo-daily-status-loop/pmo/live/` — боевые входные данные;
+- `<path_to_ouroboros>/data/state/skills/pmo-daily-status-loop/pmo/output/` — результаты, если агент или I/O-инструмент записывает их в XLSX.
 
 Внутри директории skill-а не должно быть XLSX-файлов.
 
@@ -154,7 +161,7 @@ scheduled_tasks:
 7. Остановить цепочку там, где есть ответ.
 8. Сформировать planned outbox rows с темой, официальным текстом письма, признаком `Ответ получен`, статусом отправки и флагом подтверждения.
 9. Сформировать loop log.
-10. Записать выходные XLSX в `Результат/`, если пользователь не запретил изменение файлов и каталог доступен для записи.
+10. Записать выходные XLSX в `<path_to_ouroboros>/data/state/skills/pmo-daily-status-loop/pmo/output/`, если пользователь не запретил изменение файлов и каталог доступен для записи.
 11. После записи перечитать/проверить созданные XLSX и явно указать `written rows`.
 12. Не утверждать, что XLSX записан, если запись фактически не выполнялась.
 
